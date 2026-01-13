@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Đóng Dấu & Xóa Logo Ảnh</title>
+    <meta name="description" content="Công cụ trực tuyến miễn phí để đóng dấu ảnh và xóa logo Gemini.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: hsl(250, 100%, 65%);
+            --accent: hsl(320, 100%, 65%);
+            --bg-dark: hsl(230, 25%, 8%);
+            --bg-card: hsl(230, 20%, 12%);
+            --bg-card-hover: hsl(230, 20%, 16%);
+            --bg-input: hsl(230, 20%, 15%);
+            --text-primary: hsl(0, 0%, 95%);
+            --text-secondary: hsl(230, 10%, 65%);
+            --text-muted: hsl(230, 10%, 45%);
+            --border-color: hsl(230, 20%, 20%);
+            --border-light: hsl(230, 20%, 25%);
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --shadow-glow: 0 0 30px hsla(250, 100%, 65%, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: radial-gradient(ellipse at center, hsla(250, 100%, 65%, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-lg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-lg) 0;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            background: var(--bg-card);
+            padding: var(--space-xs);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .tab-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-sm);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tab-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 900px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-area {
+            padding: var(--space-2xl);
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-xl);
+            background: var(--bg-card);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: hsla(250, 100%, 65%, 0.1);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: var(--space-lg);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .upload-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .upload-area h3 {
+            font-size: 1.3rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .upload-area p {
+            color: var(--text-secondary);
+        }
+
+        .settings-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            height: fit-content;
+        }
+
+        .settings-panel h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .setting-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+        }
+
+        .setting-group input[type="text"],
+        .setting-group input[type="color"] {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .setting-group input[type="text"]:focus,
+        .setting-group input[type="color"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px hsla(250, 100%, 65%, 0.2);
+        }
+
+        .setting-group input[type="color"] {
+            height: 44px;
+            padding: var(--space-xs);
+            cursor: pointer;
+        }
+
+        .setting-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--bg-input);
+            border-radius: var(--radius-full);
+            outline: none;
+            margin-top: var(--space-xs);
+        }
+
+        .setting-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .range-value {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg-input);
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .toggle-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .toggle-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .position-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xs);
+        }
+
+        .pos-btn {
+            aspect-ratio: 1;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .pos-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .pos-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .mini-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-lg);
+            background: var(--bg-input);
+            border: 1px dashed var(--border-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+
+        .mini-upload:hover {
+            border-color: var(--primary);
+        }
+
+        .mini-upload svg {
+            width: 32px;
+            height: 32px;
+            color: var(--text-muted);
+        }
+
+        .mini-upload span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .logo-preview {
+            width: 100%;
+            max-height: 100px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            margin-top: var(--space-sm);
+        }
+
+        .setting-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: var(--space-sm);
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .preview-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-lg);
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-input);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        .preview-container canvas {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 20px hsla(0, 0%, 0%, 0.4);
+        }
+
+        .comparison-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .comparison-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .comparison-label {
+            display: inline-block;
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg-input);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .comparison-item canvas {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: var(--radius-md);
+        }
+
+        .comparison-arrow {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .comparison-arrow svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px hsla(250, 100%, 65%, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .footer {
+            text-align: center;
+            padding: var(--space-xl) 0;
+            margin-top: var(--space-2xl);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: var(--space-md);
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-tab {
+                flex: 1;
+                justify-content: center;
+                padding: var(--space-sm);
+            }
+
+            .tab-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .comparison-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: var(--radius-full);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="M21 15l-5-5L5 21" />
+                    </svg>
+                </div>
+                <span class="logo-text">ImageTool Pro</span>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="watermark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                    Đóng Dấu Ảnh
+                </button>
+                <button class="nav-tab" data-tab="remove-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                    </svg>
+                    Xóa Logo Gemini
+                </button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Watermark Tab -->
+            <section id="watermark-tab" class="tab-content active">
+                <div class="tab-header">
+                    <h1>Đóng Dấu Ảnh</h1>
+                    <p>Thêm watermark văn bản hoặc hình ảnh vào ảnh của bạn</p>
+                </div>
+                <div class="workspace">
+                    <div class="upload-section">
+                        <div class="upload-area" id="watermark-upload-area">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </div>
+                            <h3>Kéo thả ảnh vào đây</h3>
+                            <p>hoặc click để chọn file</p>
+                            <input type="file" id="watermark-input" accept="image/*" hidden>
+                        </div>
+                    </div>
+                    <div class="settings-panel" id="watermark-settings">
+                        <h3>Cài Đặt Watermark</h3>
+                        <div class="setting-group">
+                            <label>Loại Watermark</label>
+                            <div class="toggle-buttons">
+                                <button class="toggle-btn active" data-type="text">Văn bản</button>
+                                <button class="toggle-btn" data-type="image">Hình ảnh</button>
+                            </div>
+                        </div>
+                        <div class="setting-group" id="text-watermark-settings">
+                            <label for="watermark-text">Nội dung</label>
+                            <input type="text" id="watermark-text" placeholder="Nhập watermark..." value="© My Brand">
+                            <label for="watermark-font-size">Cỡ chữ</label>
+                            <input type="range" id="watermark-font-size" min="12" max="120" value="36">
+                            <span class="range-value" id="font-size-value">36px</span>
+                            <label for="watermark-color">Màu sắc</label>
+                            <input type="color" id="watermark-color" value="#ffffff">
+                            <label for="watermark-opacity">Độ trong suốt</label>
+                            <input type="range" id="watermark-opacity" min="0" max="100" value="50">
+                            <span class="range-value" id="opacity-value">50%</span>
+                        </div>
+                        <div class="setting-group" id="image-watermark-settings" style="display: none;">
+                            <label>Ảnh Watermark</label>
+                            <div class="mini-upload" id="watermark-image-upload">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <path d="M21 15l-5-5L5 21" />
+                                </svg>
+                                <span>Chọn ảnh logo</span>
+                                <input type="file" id="watermark-logo-input" accept="image/*" hidden>
+                            </div>
+                            <img id="watermark-logo-preview" class="logo-preview" style="display: none;">
+                            <label for="logo-size">Kích thước</label>
+                            <input type="range" id="logo-size" min="5" max="50" value="20">
+                            <span class="range-value" id="logo-size-value">20%</span>
+                            <label for="logo-opacity">Độ trong suốt</label>
+                            <input type="range" id="logo-opacity" min="0" max="100" value="70">
+                            <span class="range-value" id="logo-opacity-value">70%</span>
+                        </div>
+                        <div class="setting-group">
+                            <label>Vị trí</label>
+                            <div class="position-grid">
+                                <button class="pos-btn" data-pos="top-left">↖</button>
+                                <button class="pos-btn" data-pos="top-center">↑</button>
+                                <button class="pos-btn" data-pos="top-right">↗</button>
+                                <button class="pos-btn" data-pos="middle-left">←</button>
+                                <button class="pos-btn active" data-pos="middle-center">●</button>
+                                <button class="pos-btn" data-pos="middle-right">→</button>
+                                <button class="pos-btn" data-pos="bottom-left">↙</button>
+                                <button class="pos-btn" data-pos="bottom-center">↓</button>
+                                <button class="pos-btn" data-pos="bottom-right">↘</button>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <label><input type="checkbox" id="tile-watermark"> Lặp lại watermark (Tile)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-section" id="watermark-preview-section" style="display: none;">
+                    <h3>Xem Trước</h3>
+                    <div class="preview-container"><canvas id="watermark-canvas"></canvas></div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="clear-watermark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                            Xóa
+                        </button>
+                        <button class="btn btn-primary" id="download-watermark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Tải Xuống
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Remove Logo Tab -->
+            <section id="remove-logo-tab" class="tab-content">
+                <div class="tab-header">
+                    <h1>Xóa Logo Gemini</h1>
+                    <p>Tự động phát hiện và xóa logo Gemini khỏi ảnh</p>
+                </div>
+                <div class="workspace">
+                    <div class="upload-section">
+                        <div class="upload-area" id="remove-upload-area">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </div>
+                            <h3>Kéo thả ảnh vào đây</h3>
+                            <p>hoặc click để chọn file</p>
+                            <input type="file" id="remove-input" accept="image/*" hidden>
+                        </div>
+                    </div>
+                    <div class="settings-panel" id="remove-settings">
+                        <h3>Cài Đặt Xóa Logo</h3>
+                        <div class="setting-group">
+                            <label>Vị trí Logo Gemini</label>
+                            <div class="position-grid">
+                                <button class="pos-btn" data-pos="top-left">↖</button>
+                                <button class="pos-btn" data-pos="top-center">↑</button>
+                                <button class="pos-btn" data-pos="top-right">↗</button>
+                                <button class="pos-btn" data-pos="middle-left">←</button>
+                                <button class="pos-btn" data-pos="middle-center">●</button>
+                                <button class="pos-btn" data-pos="middle-right">→</button>
+                                <button class="pos-btn active" data-pos="bottom-left">↙</button>
+                                <button class="pos-btn" data-pos="bottom-center">↓</button>
+                                <button class="pos-btn" data-pos="bottom-right">↘</button>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <label for="crop-size">Kích thước vùng cắt</label>
+                            <input type="range" id="crop-size" min="20" max="200" value="80">
+                            <span class="range-value" id="crop-size-value">80px</span>
+                        </div>
+                        <div class="setting-group">
+                            <label>Phương pháp xóa</label>
+                            <div class="toggle-buttons">
+                                <button class="toggle-btn active" data-method="crop">Cắt bỏ</button>
+                                <button class="toggle-btn" data-method="blur">Làm mờ</button>
+                                <button class="toggle-btn" data-method="fill">Tô màu</button>
+                            </div>
+                        </div>
+                        <div class="setting-group" id="fill-color-group" style="display: none;">
+                            <label for="fill-color">Màu tô</label>
+                            <input type="color" id="fill-color" value="#ffffff">
+                        </div>
+                        <div class="setting-group" id="blur-intensity-group" style="display: none;">
+                            <label for="blur-intensity">Độ mờ</label>
+                            <input type="range" id="blur-intensity" min="5" max="30" value="15">
+                            <span class="range-value" id="blur-intensity-value">15px</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-section" id="remove-preview-section" style="display: none;">
+                    <h3>Kết Quả</h3>
+                    <div class="comparison-container">
+                        <div class="comparison-item">
+                            <span class="comparison-label">Ảnh gốc</span>
+                            <canvas id="original-canvas"></canvas>
+                        </div>
+                        <div class="comparison-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                        </div>
+                        <div class="comparison-item">
+                            <span class="comparison-label">Đã xóa logo</span>
+                            <canvas id="result-canvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="clear-remove">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                            Xóa
+                        </button>
+                        <button class="btn btn-primary" id="download-remove">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Tải Xuống
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="footer">
+            <p>© 2026 ImageTool Pro - Công cụ xử lý ảnh trực tuyến miễn phí</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { initTabs(); initWatermarkTool(); initRemoveLogoTool(); });
+
+        function initTabs() {
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        let watermarkState = { image: null, logoImage: null, type: 'text', text: '© My Brand', fontSize: 36, color: '#ffffff', opacity: 50, logoSize: 20, logoOpacity: 70, position: 'middle-center', tile: false };
+
+        function initWatermarkTool() {
+            const uploadArea = document.getElementById('watermark-upload-area');
+            const fileInput = document.getElementById('watermark-input');
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleWatermarkFile(e.dataTransfer.files[0]); });
+            fileInput.addEventListener('change', e => { if (e.target.files.length) handleWatermarkFile(e.target.files[0]); });
+
+            document.querySelectorAll('#watermark-settings .toggle-buttons .toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#watermark-settings .toggle-buttons .toggle-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    watermarkState.type = btn.dataset.type;
+                    document.getElementById('text-watermark-settings').style.display = btn.dataset.type === 'text' ? 'block' : 'none';
+                    document.getElementById('image-watermark-settings').style.display = btn.dataset.type === 'image' ? 'block' : 'none';
+                    if (watermarkState.image) renderWatermark();
+                });
+            });
+
+            document.getElementById('watermark-text').addEventListener('input', e => { watermarkState.text = e.target.value; if (watermarkState.image) renderWatermark(); });
+            document.getElementById('watermark-font-size').addEventListener('input', e => { watermarkState.fontSize = parseInt(e.target.value); document.getElementById('font-size-value').textContent = `${e.target.value}px`; if (watermarkState.image) renderWatermark(); });
+            document.getElementById('watermark-color').addEventListener('input', e => { watermarkState.color = e.target.value; if (watermarkState.image) renderWatermark(); });
+            document.getElementById('watermark-opacity').addEventListener('input', e => { watermarkState.opacity = parseInt(e.target.value); document.getElementById('opacity-value').textContent = `${e.target.value}%`; if (watermarkState.image) renderWatermark(); });
+
+            const logoUpload = document.getElementById('watermark-image-upload');
+            const logoInput = document.getElementById('watermark-logo-input');
+            logoUpload.addEventListener('click', () => logoInput.click());
+            logoInput.addEventListener('change', e => {
+                if (e.target.files.length) {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        const img = new Image();
+                        img.onload = () => { watermarkState.logoImage = img; document.getElementById('watermark-logo-preview').src = ev.target.result; document.getElementById('watermark-logo-preview').style.display = 'block'; if (watermarkState.image) renderWatermark(); };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            document.getElementById('logo-size').addEventListener('input', e => { watermarkState.logoSize = parseInt(e.target.value); document.getElementById('logo-size-value').textContent = `${e.target.value}%`; if (watermarkState.image) renderWatermark(); });
+            document.getElementById('logo-opacity').addEventListener('input', e => { watermarkState.logoOpacity = parseInt(e.target.value); document.getElementById('logo-opacity-value').textContent = `${e.target.value}%`; if (watermarkState.image) renderWatermark(); });
+
+            document.querySelectorAll('#watermark-settings .position-grid .pos-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#watermark-settings .position-grid .pos-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    watermarkState.position = btn.dataset.pos;
+                    if (watermarkState.image) renderWatermark();
+                });
+            });
+
+            document.getElementById('tile-watermark').addEventListener('change', e => { watermarkState.tile = e.target.checked; if (watermarkState.image) renderWatermark(); });
+            document.getElementById('clear-watermark').addEventListener('click', () => { watermarkState.image = null; document.getElementById('watermark-preview-section').style.display = 'none'; });
+            document.getElementById('download-watermark').addEventListener('click', () => { const link = document.createElement('a'); link.download = 'watermarked-image.png'; link.href = document.getElementById('watermark-canvas').toDataURL('image/png'); link.click(); });
+        }
+
+        function handleWatermarkFile(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => { watermarkState.image = img; document.getElementById('watermark-preview-section').style.display = 'block'; renderWatermark(); };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderWatermark() {
+            const canvas = document.getElementById('watermark-canvas');
+            const ctx = canvas.getContext('2d');
+            const img = watermarkState.image;
+            canvas.width = img.width; canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            if (watermarkState.type === 'text') {
+                ctx.font = `bold ${watermarkState.fontSize}px Inter, sans-serif`;
+                ctx.fillStyle = watermarkState.color;
+                ctx.globalAlpha = watermarkState.opacity / 100;
+                if (watermarkState.tile) {
+                    const tw = ctx.measureText(watermarkState.text).width, gap = 50;
+                    for (let y = watermarkState.fontSize; y < canvas.height; y += watermarkState.fontSize + gap) {
+                        for (let x = 0; x < canvas.width; x += tw + gap) {
+                            ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.PI / 6); ctx.fillText(watermarkState.text, 0, 0); ctx.restore();
+                        }
+                    }
+                } else {
+                    const pos = getPosition(ctx.measureText(watermarkState.text).width, watermarkState.fontSize, canvas.width, canvas.height);
+                    ctx.fillText(watermarkState.text, pos.x, pos.y);
+                }
+            } else if (watermarkState.logoImage) {
+                const lw = (canvas.width * watermarkState.logoSize) / 100, lh = (watermarkState.logoImage.height / watermarkState.logoImage.width) * lw;
+                ctx.globalAlpha = watermarkState.logoOpacity / 100;
+                if (watermarkState.tile) { const gap = 50; for (let y = 0; y < canvas.height; y += lh + gap) for (let x = 0; x < canvas.width; x += lw + gap) ctx.drawImage(watermarkState.logoImage, x, y, lw, lh); }
+                else { const pos = getPosition(lw, lh, canvas.width, canvas.height); ctx.drawImage(watermarkState.logoImage, pos.x, pos.y, lw, lh); }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function getPosition(w, h, cw, ch) {
+            const p = 20;
+            const positions = { 'top-left': { x: p, y: h + p }, 'top-center': { x: (cw - w) / 2, y: h + p }, 'top-right': { x: cw - w - p, y: h + p }, 'middle-left': { x: p, y: (ch + h) / 2 }, 'middle-center': { x: (cw - w) / 2, y: (ch + h) / 2 }, 'middle-right': { x: cw - w - p, y: (ch + h) / 2 }, 'bottom-left': { x: p, y: ch - p }, 'bottom-center': { x: (cw - w) / 2, y: ch - p }, 'bottom-right': { x: cw - w - p, y: ch - p } };
+            return positions[watermarkState.position] || positions['middle-center'];
+        }
+
+        let removeState = { image: null, position: 'bottom-left', cropSize: 80, method: 'crop', fillColor: '#ffffff', blurIntensity: 15 };
+
+        function initRemoveLogoTool() {
+            const uploadArea = document.getElementById('remove-upload-area');
+            const fileInput = document.getElementById('remove-input');
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); if (e.dataTransfer.files.length) handleRemoveFile(e.dataTransfer.files[0]); });
+            fileInput.addEventListener('change', e => { if (e.target.files.length) handleRemoveFile(e.target.files[0]); });
+
+            document.querySelectorAll('#remove-settings .position-grid .pos-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#remove-settings .position-grid .pos-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    removeState.position = btn.dataset.pos;
+                    if (removeState.image) renderRemove();
+                });
+            });
+
+            document.getElementById('crop-size').addEventListener('input', e => { removeState.cropSize = parseInt(e.target.value); document.getElementById('crop-size-value').textContent = `${e.target.value}px`; if (removeState.image) renderRemove(); });
+
+            document.querySelectorAll('#remove-settings .toggle-buttons .toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#remove-settings .toggle-buttons .toggle-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    removeState.method = btn.dataset.method;
+                    document.getElementById('fill-color-group').style.display = btn.dataset.method === 'fill' ? 'block' : 'none';
+                    document.getElementById('blur-intensity-group').style.display = btn.dataset.method === 'blur' ? 'block' : 'none';
+                    if (removeState.image) renderRemove();
+                });
+            });
+
+            document.getElementById('fill-color').addEventListener('input', e => { removeState.fillColor = e.target.value; if (removeState.image) renderRemove(); });
+            document.getElementById('blur-intensity').addEventListener('input', e => { removeState.blurIntensity = parseInt(e.target.value); document.getElementById('blur-intensity-value').textContent = `${e.target.value}px`; if (removeState.image) renderRemove(); });
+            document.getElementById('clear-remove').addEventListener('click', () => { removeState.image = null; document.getElementById('remove-preview-section').style.display = 'none'; });
+            document.getElementById('download-remove').addEventListener('click', () => { const link = document.createElement('a'); link.download = 'logo-removed.png'; link.href = document.getElementById('result-canvas').toDataURL('image/png'); link.click(); });
+        }
+
+        function handleRemoveFile(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => { removeState.image = img; document.getElementById('remove-preview-section').style.display = 'block'; renderRemove(); };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderRemove() {
+            const origCanvas = document.getElementById('original-canvas'), resCanvas = document.getElementById('result-canvas');
+            const origCtx = origCanvas.getContext('2d'), resCtx = resCanvas.getContext('2d');
+            const img = removeState.image;
+            origCanvas.width = img.width; origCanvas.height = img.height;
+            resCanvas.width = img.width; resCanvas.height = img.height;
+            origCtx.drawImage(img, 0, 0); resCtx.drawImage(img, 0, 0);
+
+            const size = removeState.cropSize, rect = getLogoRect(img.width, img.height, size);
+            origCtx.strokeStyle = '#ff4444'; origCtx.lineWidth = 3; origCtx.setLineDash([5, 5]); origCtx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+
+            if (removeState.method === 'crop') { resCtx.fillStyle = '#000000'; resCtx.fillRect(rect.x, rect.y, rect.w, rect.h); }
+            else if (removeState.method === 'fill') { resCtx.fillStyle = removeState.fillColor; resCtx.fillRect(rect.x, rect.y, rect.w, rect.h); }
+            else if (removeState.method === 'blur') {
+                const tc = document.createElement('canvas'); tc.width = rect.w; tc.height = rect.h;
+                const tctx = tc.getContext('2d');
+                tctx.drawImage(img, rect.x, rect.y, rect.w, rect.h, 0, 0, rect.w, rect.h);
+                tctx.filter = `blur(${removeState.blurIntensity}px)`; tctx.drawImage(tc, 0, 0);
+                resCtx.drawImage(tc, rect.x, rect.y);
+            }
+        }
+
+        function getLogoRect(w, h, size) {
+            const p = 10;
+            const positions = { 'top-left': { x: p, y: p }, 'top-center': { x: (w - size) / 2, y: p }, 'top-right': { x: w - size - p, y: p }, 'middle-left': { x: p, y: (h - size) / 2 }, 'middle-center': { x: (w - size) / 2, y: (h - size) / 2 }, 'middle-right': { x: w - size - p, y: (h - size) / 2 }, 'bottom-left': { x: p, y: h - size - p }, 'bottom-center': { x: (w - size) / 2, y: h - size - p }, 'bottom-right': { x: w - size - p, y: h - size - p } };
+            const pos = positions[removeState.position] || positions['bottom-left'];
+            return { x: pos.x, y: pos.y, w: size, h: size };
+        }
+    </script>
+</body>
+
+</html>
